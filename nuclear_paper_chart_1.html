@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IdyllIO Sigma Model - Plot and Data Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>IdyllIO Sigma Model</h1>
+    
+    <!-- Canvas for the plot -->
+    <div class="chart-container">
+        <canvas id="plotCanvas" width="800" height="400"></canvas>
+    </div>
+    
+    <!-- Data Table -->
+    <h2>Data Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>n<sub>B</sub> [n<sub>0</sub>]</th>
+                <th>Symmetric Matter [MeV]</th>
+                <th>Neutron Matter [MeV]</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>0.0</td><td>0.00</td><td>2.00</td></tr>
+            <tr><td>0.5</td><td>-10.00</td><td>5.00</td></tr>
+            <tr><td>1.0</td><td>-16.00</td><td>10.00</td></tr>
+            <tr><td>1.5</td><td>-13.00</td><td>26.00</td></tr>
+            <tr><td>2.0</td><td>-7.50</td><td>47.00</td></tr>
+            <tr><td>2.5</td><td>0.00</td><td>N/A</td></tr>
+            <tr><td>3.0</td><td>8.00</td><td>N/A</td></tr>
+            <tr><td>3.5</td><td>17.00</td><td>N/A</td></tr>
+            <tr><td>4.0</td><td>26.00</td><td>N/A</td></tr>
+            <tr><td>4.5</td><td>36.00</td><td>N/A</td></tr>
+            <tr><td>5.0</td><td>47.00</td><td>N/A</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Full dataset
+        const data = [
+            { nB: 0.0, symmetricMatter: 0.00, neutronMatter: 2.00 },
+            { nB: 0.1, symmetricMatter: -2.00, neutronMatter: 3.00 },
+            { nB: 0.2, symmetricMatter: -4.00, neutronMatter: 4.00 },
+            { nB: 0.3, symmetricMatter: -6.00, neutronMatter: 4.50 },
+            { nB: 0.4, symmetricMatter: -8.00, neutronMatter: 5.00 },
+            { nB: 0.5, symmetricMatter: -10.00, neutronMatter: 5.00 },
+            { nB: 0.6, symmetricMatter: -12.00, neutronMatter: 5.00 },
+            { nB: 0.7, symmetricMatter: -13.50, neutronMatter: 6.00 },
+            { nB: 0.8, symmetricMatter: -14.00, neutronMatter: 7.00 },
+            { nB: 0.9, symmetricMatter: -15.00, neutronMatter: 8.50 },
+            { nB: 1.0, symmetricMatter: -16.00, neutronMatter: 10.00 },
+            { nB: 1.1, symmetricMatter: -15.75, neutronMatter: 12.50 },
+            { nB: 1.2, symmetricMatter: -15.50, neutronMatter: 15.00 },
+            { nB: 1.3, symmetricMatter: -15.00, neutronMatter: 18.50 },
+            { nB: 1.4, symmetricMatter: -14.00, neutronMatter: 22.00 },
+            { nB: 1.5, symmetricMatter: -13.00, neutronMatter: 26.00 },
+            { nB: 1.6, symmetricMatter: -12.00, neutronMatter: 30.00 },
+            { nB: 1.7, symmetricMatter: -11.00, neutronMatter: 34.00 },
+            { nB: 1.8, symmetricMatter: -10.00, neutronMatter: 38.00 },
+            { nB: 1.9, symmetricMatter: -8.75, neutronMatter: 42.50 },
+            { nB: 2.0, symmetricMatter: -7.50, neutronMatter: 47.00 },
+            { nB: 2.1, symmetricMatter: -6.00, neutronMatter: null },
+            { nB: 2.2, symmetricMatter: -5.00, neutronMatter: null },
+            { nB: 2.3, symmetricMatter: -3.33, neutronMatter: null },
+            { nB: 2.4, symmetricMatter: -1.67, neutronMatter: null },
+            { nB: 2.5, symmetricMatter: 0.00, neutronMatter: null },
+            { nB: 2.6, symmetricMatter: 1.60, neutronMatter: null },
+            { nB: 2.7, symmetricMatter: 3.20, neutronMatter: null },
+            { nB: 2.8, symmetricMatter: 4.80, neutronMatter: null },
+            { nB: 2.9, symmetricMatter: 6.40, neutronMatter: null },
+            { nB: 3.0, symmetricMatter: 8.00, neutronMatter: null },
+            { nB: 3.1, symmetricMatter: 9.80, neutronMatter: null },
+            { nB: 3.2, symmetricMatter: 11.60, neutronMatter: null },
+            { nB: 3.3, symmetricMatter: 13.40, neutronMatter: null },
+            { nB: 3.4, symmetricMatter: 15.20, neutronMatter: null },
+            { nB: 3.5, symmetricMatter: 17.00, neutronMatter: null },
+            { nB: 3.6, symmetricMatter: 18.80, neutronMatter: null },
+            { nB: 3.7, symmetricMatter: 20.60, neutronMatter: null },
+            { nB: 3.8, symmetricMatter: 22.40, neutronMatter: null },
+            { nB: 3.9, symmetricMatter: 24.20, neutronMatter: null },
+            { nB: 4.0, symmetricMatter: 26.00, neutronMatter: null },
+            { nB: 4.1, symmetricMatter: 28.00, neutronMatter: null },
+            { nB: 4.2, symmetricMatter: 30.00, neutronMatter: null },
+            { nB: 4.3, symmetricMatter: 32.00, neutronMatter: null },
+            { nB: 4.4, symmetricMatter: 34.00, neutronMatter: null },
+            { nB: 4.5, symmetricMatter: 36.00, neutronMatter: null },
+            { nB: 4.6, symmetricMatter: 38.20, neutronMatter: null },
+            { nB: 4.7, symmetricMatter: 40.40, neutronMatter: null },
+            { nB: 4.8, symmetricMatter: 42.60, neutronMatter: null },
+            { nB: 4.9, symmetricMatter: 44.80, neutronMatter: null },
+            { nB: 5.0, symmetricMatter: 47.00, neutronMatter: null }
+        ];
+
+        // Draw the chart
+        window.onload = function() {
+            const canvas = document.getElementById('plotCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Plot dimensions
+            const margin = { top: 50, right: 50, bottom: 50, left: 70 };
+            const width = canvas.width - margin.left - margin.right;
+            const height = canvas.height - margin.top - margin.bottom;
+            
+            // Add white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Plot ranges
+            const xMin = 0, xMax = 5;
+            const yMin = -20, yMax = 50;
+            
+            // Scaling functions
+            function xScale(x) {
+                return margin.left + (x - xMin) * width / (xMax - xMin);
+            }
+            
+            function yScale(y) {
+                return margin.top + height - (y - yMin) * height / (yMax - yMin);
+            }
+            
+            // Draw axes
+            ctx.beginPath();
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1.5;
+            
+            // X-axis
+            ctx.moveTo(margin.left, margin.top + height);
+            ctx.lineTo(margin.left + width, margin.top + height);
+            
+            // Y-axis
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + height);
+            ctx.stroke();
+            
+            // Draw axis labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            
+            // X-axis labels
+            for (let x = 0; x <= 5; x++) {
+                const xPos = xScale(x);
+                ctx.fillText(x.toString(), xPos, margin.top + height + 20);
+            }
+            
+            // X-axis title
+            ctx.font = '14px Arial';
+            ctx.fillText('nB [n0]', margin.left + width / 2, margin.top + height + 40);
+            
+            // Y-axis labels
+            ctx.textAlign = 'right';
+            ctx.font = '12px Arial';
+            for (let y = -20; y <= 50; y += 10) {
+                const yPos = yScale(y);
+                ctx.fillText(y.toString(), margin.left - 10, yPos + 4);
+            }
+            
+            // Y-axis title
+            ctx.save();
+            ctx.translate(margin.left - 45, margin.top + height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.font = '14px Arial';
+            ctx.fillText('Ebind [MeV]', 0, 0);
+            ctx.restore();
+            
+            // Draw Symmetric Matter curve (solid line)
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            
+            let firstPoint = true;
+            for (const point of data) {
+                if (point.symmetricMatter !== null) {
+                    const x = xScale(point.nB);
+                    const y = yScale(point.symmetricMatter);
+                    
+                    if (firstPoint) {
+                        ctx.moveTo(x, y);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+            }
+            ctx.stroke();
+            
+            // Draw Neutron Matter curve (dashed line)
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            
+            firstPoint = true;
+            for (const point of data) {
+                if (point.neutronMatter !== null) {
+                    const x = xScale(point.nB);
+                    const y = yScale(point.neutronMatter);
+                    
+                    if (firstPoint) {
+                        ctx.moveTo(x, y);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Add legend at the bottom right corner
+            const legendWidth = 140;
+            const legendHeight = 60;
+            const legendX = margin.left + width - legendWidth - 10;
+            const legendY = margin.top + height - legendHeight - 10;
+            
+            // Legend background
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(legendX, legendY, legendWidth, legendHeight);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(legendX, legendY, legendWidth, legendHeight);
+            
+            // Symmetric Matter legend item
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([]);
+            ctx.moveTo(legendX + 10, legendY + 20);
+            ctx.lineTo(legendX + 40, legendY + 20);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'left';
+            ctx.font = '12px Arial';
+            ctx.fillText('Symmetric Matter', legendX + 50, legendY + 24);
+            
+            // Neutron Matter legend item
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(legendX + 10, legendY + 40);
+            ctx.lineTo(legendX + 40, legendY + 40);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.fillText('Neutron Matter', legendX + 50, legendY + 44);
+        };
+    </script>
+</body>
+</html>
